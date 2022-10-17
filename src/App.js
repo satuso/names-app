@@ -8,6 +8,8 @@ let all = { ...women, ...men }
 
 const App = () => {
   const [name, setName] = useState("")
+  const [show, setShow] = useState(false)
+  const [message, setMessage] = useState("")
   const [display, setDisplay] = useState("")
   const [selected, setSelected] = useState("all")
   const [data, setData] = useState(all)
@@ -35,6 +37,7 @@ const App = () => {
 
   const submitForm = (e) => {
     e.preventDefault()
+    setShow(true)
     setQuery(name.charAt(0).toUpperCase() + name.slice(1))
     if (name.length > 0){
       const k = Object.keys(data).find((key) => key.toLowerCase() === name.toLowerCase())
@@ -50,29 +53,15 @@ const App = () => {
         </tbody>
       )
       if (val === undefined){
+        setShow(false)
         setWiki([])
-        setDisplay(
-          <tbody key={key}>
-            <tr>
-            <td></td>
-            <td>Nimeä ei löydy</td>
-            <td></td>
-            </tr>
-          </tbody>
-        )
+        setMessage("Nimeä ei löydy")
       }
     }
      else {
+      setShow(false)
       setWiki([])
-      setDisplay(
-        <tbody>
-          <tr>
-          <td></td>
-          <td>Nimeä ei löydy</td>
-          <td></td>
-          </tr>
-        </tbody>
-      )
+      setMessage("Nimeä ei löydy")
     }
   }
 
@@ -80,6 +69,8 @@ const App = () => {
     e.preventDefault()
     setName("")
     setDisplay("")
+    setMessage("")
+    setShow(false)
     setWiki([])
   }
 
@@ -104,6 +95,8 @@ const App = () => {
     setName("")
     setQuery("")
     setDisplay("")
+    setShow(false)
+    setWiki([])
   }
 
   const getRandomName = (e) => {
@@ -123,6 +116,7 @@ const App = () => {
       </tbody>
       )
     }
+    setShow(true)
     setDisplay(rand(data))
   }
 
@@ -152,6 +146,7 @@ const App = () => {
     })
     const result2 = Object.fromEntries(result)
     setWiki([])
+    setShow(true)
     setDisplay(
       Object.entries(result2).map(([key, value], index) =>
       <tbody key={key}>
@@ -210,6 +205,8 @@ const App = () => {
           onChange={handleRadioChange}
           /> Nainen
       </form>
+      {!show && <p className="message">{message}</p>}
+      {show && 
         <table>
           <thead>
           <tr>
@@ -220,6 +217,7 @@ const App = () => {
           </thead>
           {display}
         </table>
+        }
       <div>
       <div>
         {wiki && ((wiki.extract?.includes("etunimi") && data === all) || (wiki.extract?.includes("miehen etunimi") && data === men) || (wiki.extract?.includes("naisen etunimi") && data === women)) && 
